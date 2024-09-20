@@ -1,6 +1,7 @@
 import asyncio
 import pandas as pd
 import numpy as np
+import os
 
 from whocc import WHOCCAtcDddIndex
 
@@ -9,11 +10,13 @@ async def main(loop):
     atc_ddd = WHOCCAtcDddIndex(loop=loop)
     await atc_ddd.get_l5()
 
-    pd.DataFrame(atc_ddd.l1, columns=["ATC code", "href", "name"]).to_excel('demo_atc_l1.xlsx', index=False)
-    pd.DataFrame(atc_ddd.l2, columns=["ATC code", "href", "name"]).to_excel('demo_atc_l2.xlsx', index=False)
-    pd.DataFrame(atc_ddd.l3, columns=["ATC code", "href", "name"]).to_excel('demo_atc_l3.xlsx', index=False)
-    pd.DataFrame(atc_ddd.l4, columns=["ATC code", "href", "name"]).to_excel('demo_atc_l4.xlsx', index=False)
-    pd.DataFrame(atc_ddd.l5).to_excel('demo_atc_l5.xlsx', index=False)
+    os.makedirs('../output', exist_ok=True)
+
+    pd.DataFrame(atc_ddd.l1, columns=["ATC code", "href", "name"]).to_json('../output/demo_atc_l1.json', orient='records', lines=False)
+    pd.DataFrame(atc_ddd.l2, columns=["ATC code", "href", "name"]).to_json('../output/demo_atc_l2.json', orient='records', lines=False)
+    pd.DataFrame(atc_ddd.l3, columns=["ATC code", "href", "name"]).to_json('../output/demo_atc_l3.json', orient='records', lines=False)
+    pd.DataFrame(atc_ddd.l4, columns=["ATC code", "href", "name"]).to_json('../output/demo_atc_l4.json', orient='records', lines=False)
+    pd.DataFrame(atc_ddd.l5).to_json('../output/demo_atc_l5.json', orient='records', lines=False)
 
     # Add suffix to level dataframes
     data_l1 = pd.DataFrame(atc_ddd.l1, columns=["ATC code", "href", "name"]).add_suffix('_L1')
@@ -50,9 +53,9 @@ async def main(loop):
     concatenated_data.sort_values(by=['ATC code_L1', 'ATC code_L2', 'ATC code_L3', 'ATC code_L4', 'ATC code_L5'], inplace=True)
     #flag na ddd 
     concatenated_data['flag_DDD'] = np.where(concatenated_data['DDD_L5'].notna(), 1, 0)
-    # Save the concatenated dataframe to an Excel file
-    concatenated_data.to_excel('ATC_DDD_Index.xlsx', index=False)
-    
+    # Save the concatenated dataframe to an JSON file
+    concatenated_data.to_json('../output/ATC_DDD_Index.json', orient='records', lines=False)
+
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()

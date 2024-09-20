@@ -2,8 +2,8 @@ import scrapy
 
 class WhoccSpider(scrapy.Spider):
     name = 'fourth'
-    allowed_domains = ['www.whocc.no']
-    start_urls = ['https://www.whocc.no/atc_ddd_index/?code=A&showdescription=no']
+    allowed_domains = ['atcddd.fhi.no']
+    start_urls = ['https://atcddd.fhi.no/atc_ddd_index/?code=A&showdescription=no']
 
     def parse(self, response):
         
